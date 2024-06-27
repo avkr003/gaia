@@ -1,6 +1,7 @@
 package gaia
 
 import (
+	"github.com/cosmos/cosmos-sdk/x/amm"
 	pfmrouter "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/packetforward"
 	pfmroutertypes "github.com/cosmos/ibc-apps/middleware/packet-forward-middleware/v7/packetforward/types"
 	ica "github.com/cosmos/ibc-go/v7/modules/apps/27-interchain-accounts"
@@ -11,9 +12,6 @@ import (
 	ibcclientclient "github.com/cosmos/ibc-go/v7/modules/core/02-client/client"
 	ibcexported "github.com/cosmos/ibc-go/v7/modules/core/exported"
 	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
-	icsprovider "github.com/cosmos/interchain-security/v3/x/ccv/provider"
-	icsproviderclient "github.com/cosmos/interchain-security/v3/x/ccv/provider/client"
-	providertypes "github.com/cosmos/interchain-security/v3/x/ccv/provider/types"
 
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/auth"
@@ -59,6 +57,8 @@ import (
 	"github.com/cosmos/gaia/v15/x/globalfee"
 	"github.com/cosmos/gaia/v15/x/metaprotocols"
 	metaprotocolstypes "github.com/cosmos/gaia/v15/x/metaprotocols/types"
+
+	ammtypes "github.com/cosmos/cosmos-sdk/x/amm/types"
 )
 
 var maccPerms = map[string][]string{
@@ -69,9 +69,7 @@ var maccPerms = map[string][]string{
 	stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
 	stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 	govtypes.ModuleName:            {authtypes.Burner},
-	// liquiditytypes.ModuleName:         {authtypes.Minter, authtypes.Burner},
-	ibctransfertypes.ModuleName:       {authtypes.Minter, authtypes.Burner},
-	providertypes.ConsumerRewardsPool: nil,
+	ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 }
 
 // ModuleBasics defines the module BasicManager is in charge of setting up basic,
@@ -92,9 +90,6 @@ var ModuleBasics = module.NewBasicManager(
 			upgradeclient.LegacyCancelProposalHandler,
 			ibcclientclient.UpdateClientProposalHandler,
 			ibcclientclient.UpgradeProposalHandler,
-			icsproviderclient.ConsumerAdditionProposalHandler,
-			icsproviderclient.ConsumerRemovalProposalHandler,
-			icsproviderclient.ChangeRewardDenomsProposalHandler,
 		},
 	),
 	sdkparams.AppModuleBasic{},
@@ -111,9 +106,10 @@ var ModuleBasics = module.NewBasicManager(
 	pfmrouter.AppModuleBasic{},
 	ica.AppModuleBasic{},
 	globalfee.AppModule{},
-	icsprovider.AppModuleBasic{},
 	consensus.AppModuleBasic{},
 	metaprotocols.AppModuleBasic{},
+
+	amm.AppModuleBasic{},
 )
 
 func appModules(
@@ -151,8 +147,9 @@ func appModules(
 		app.TransferModule,
 		app.ICAModule,
 		app.PFMRouterModule,
-		app.ProviderModule,
 		metaprotocols.NewAppModule(),
+
+		amm.NewAppModule(appCodec, app.AMMKeeper, app.BankKeeper),
 	}
 }
 
@@ -181,7 +178,6 @@ func simulationModules(
 		ibc.NewAppModule(app.IBCKeeper),
 		app.TransferModule,
 		app.ICAModule,
-		app.ProviderModule,
 	}
 }
 
@@ -221,9 +217,10 @@ func orderBeginBlockers() []string {
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
 		globalfee.ModuleName,
-		providertypes.ModuleName,
 		consensusparamtypes.ModuleName,
 		metaprotocolstypes.ModuleName,
+
+		ammtypes.ModuleName,
 	}
 }
 
@@ -258,9 +255,9 @@ func orderEndBlockers() []string {
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		globalfee.ModuleName,
-		providertypes.ModuleName,
 		consensusparamtypes.ModuleName,
 		metaprotocolstypes.ModuleName,
+		ammtypes.ModuleName,
 	}
 }
 
@@ -303,8 +300,9 @@ func orderInitBlockers() []string {
 		// min fee is empty when gentx is called.
 		// For more details, please refer to the following link: https://github.com/cosmos/gaia/issues/2489
 		globalfee.ModuleName,
-		providertypes.ModuleName,
 		consensusparamtypes.ModuleName,
 		metaprotocolstypes.ModuleName,
+
+		ammtypes.ModuleName,
 	}
 }

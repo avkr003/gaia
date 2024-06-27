@@ -21,7 +21,6 @@ import (
 	tmos "github.com/cometbft/cometbft/libs/os"
 
 	ibctesting "github.com/cosmos/ibc-go/v7/testing"
-	providertypes "github.com/cosmos/interchain-security/v3/x/ccv/provider/types"
 
 	autocliv1 "cosmossdk.io/api/cosmos/autocli/v1"
 	reflectionv1 "cosmossdk.io/api/cosmos/reflection/v1"
@@ -298,9 +297,6 @@ func (app *GaiaApp) ModuleAccountAddrs() map[string]bool {
 func (app *GaiaApp) BlockedModuleAccountAddrs(modAccAddrs map[string]bool) map[string]bool {
 	// remove module accounts that are ALLOWED to received funds
 	delete(modAccAddrs, authtypes.NewModuleAddress(govtypes.ModuleName).String())
-
-	// Remove the ConsumerRewardsPool from the group of blocked recipient addresses in bank
-	delete(modAccAddrs, authtypes.NewModuleAddress(providertypes.ConsumerRewardsPool).String())
 
 	return modAccAddrs
 }
