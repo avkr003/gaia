@@ -17,6 +17,8 @@
 `gaiad tx amm create 10000000ubtc,5000000000uusd 0.003 --chain-id elys-1 --from test --keyring-backend test --gas-prices 0.001uelys
 ` 
 
+NOTE: Swap fees cannot be less than 0 and more than MaxSwapFee in the parameters of `amm` module
+
 ### To Add liquidity to existing pool [TX]:
 
 `gaiad tx amm join [poolId] [token1]`
