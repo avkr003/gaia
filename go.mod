@@ -198,7 +198,7 @@ replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 
 	// Use special SDK v0.47.x release with support for both ICS and LSM
-	github.com/cosmos/cosmos-sdk => ../cosmos-sdk
+	github.com/cosmos/cosmos-sdk => github.com/avkr003/cosmos-sdk amm-47
 
 	// Use special ICS v3.3.x release with support for LSM
 	//github.com/cosmos/interchain-security/v3 => github.com/cosmos/interchain-security/v3 v3.3.3-lsm

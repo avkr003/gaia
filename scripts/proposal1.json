@@ -1,0 +1,12 @@
+{
+  "title": "MaxFee Change",
+  "description": "Changing MaxFee",
+  "changes": [
+    {
+      "subspace": "amm",
+      "key": "MaxSwapFee",
+      "value": "0.6"
+    }
+  ],
+  "deposit": "1000000000uelys"
+}
