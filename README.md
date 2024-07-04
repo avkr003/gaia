@@ -69,6 +69,10 @@ To withdraw all, add flag:
 
 `gaiad q amm poolShares cosmos15dhand5cd7tmdrjrfcdfgls8r70dhyf7nzshdh`
 
+Other method: 
+
+`gaiad q bank balances cosmos15dhand5cd7tmdrjrfcdfgls8r70dhyf7nzshdh`
+
 #### To query module params:
 
 `gaiad q amm params`
@@ -76,3 +80,7 @@ To withdraw all, add flag:
 #### To query bank balances:
 
 `gaiad q bank balances [address]`
+
+#### To query total shares of a pool:
+
+`gaiad q bank total --denom=pool/{poolID}`
